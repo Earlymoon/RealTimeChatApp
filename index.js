@@ -1,6 +1,7 @@
 const express = require("express");
 const socketio = require("socket.io");
 const http = require("http");
+
 const PORT = process.env.PORT || 5000;
 const app = express();
 const router = require("./router");
@@ -8,19 +9,23 @@ const server = http.createServer(app);
 const cors = require("cors");
 
 const { addUser, removeUser, getUser, getUsersInRoom } = require("./users");
-const path = require("path");
 
 // const io = socketio(server);
-app.use(cors());
+const corsOptions = {
+  origin: process.env.CLIENT_URL || "http://localhost:3000",
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 const io = socketio(server, {
-  path: "/socket",
-  wssEngine: ["ws", "wss"],
-  transports: ["websocket", "polling"],
-  cors: {
-    origin: "*",
-  },
-  allowEIO3: true,
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:4173",
+    process.env.CLIENT_URL,
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
 });
 
 app.use(router);
@@ -77,5 +82,5 @@ io.on("connection", (socket) => {
 // this code establishes a WebSocket server using socket.io, logs messages when users connect and disconnect, and listens for events emitted by clients. It forms the basis for real-time bidirectional communication between clients and the server.
 
 server.listen(PORT, () => {
-  console.log(`Server is started on port ${PORT}`);
+  console.log(`Serever is fine and working`);
 });
