@@ -8,15 +8,19 @@ const server = http.createServer(app);
 const cors = require("cors");
 
 const { addUser, removeUser, getUser, getUsersInRoom } = require("./users");
+const path = require("path");
 
 // const io = socketio(server);
 app.use(cors());
 
 const io = socketio(server, {
+  path: "/socket",
+  wssEngine: ["ws", "wss"],
+  transports: ["websocket", "polling"],
   cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
-    methods: ["GET", "POST"],
+    origin: "*",
   },
+  allowEIO3: true,
 });
 
 app.use(router);
